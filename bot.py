@@ -12,6 +12,8 @@ def input_error(func):
             return "Give me name and phone please"
         except IndexError:
             return "Invalid command format"
+        except Exception as e:
+            return f"Error: {str(e)}"
     return wrapper
 
 # Function to greet the user
@@ -20,28 +22,47 @@ def hello():
 
 # Function to add a new contact
 @input_error
-def add_contact(name, phone):
-    contacts[name] = phone
-    return f"Contact {name} added with phone number {phone}"
+def add_contact(command):
+    parts = command.split(" ")
+    if len(parts) == 3:
+        name, phone = parts[1], parts[2]
+        if name not in contacts:
+            contacts[name] = phone
+            return f"Contact {name} with number {phone} saved."
+        else:
+            return "Contact with the same name already exists"
+    else:
+        raise ValueError
 
 # Function to change the phone number of an existing contact
 @input_error
-def change_contact(name, phone):
-    if name in contacts:
-        contacts[name] = phone
-        return f"Phone number for {name} changed to {phone}"
+def change_contact(command):
+    parts = command.split(" ")
+    if len(parts) == 3:
+        name, phone = parts[1], parts[2]
+        if name in contacts:
+            contacts[name] = phone
+            return f"Phone number for {name} changed to {phone}."
+        else:
+            raise KeyError
     else:
-        return f"Contact with name {name} not found"
+        raise ValueError
 
-# Function for outputting the phone number of a contact
+# Function to output the phone number of a contact
 @input_error
-def phone_contact(name):
-    if name in contacts:
-        return f"Phone number for {name}: {contacts[name]}"
+def get_phone(command):
+    parts = command.split(" ")
+    if len(parts) == 2:
+        name = parts[1]
+        if name in contacts:
+            return f"Phone number for {name}: {contacts[name]}"
+        else:
+            raise KeyError
     else:
-        return f"Contact with name {name} not found"
+        raise ValueError
 
 # Function to display all contacts
+@input_error
 def show_all_contacts():
     if contacts:
         result = "All contacts:\n"
@@ -55,34 +76,23 @@ def show_all_contacts():
 def exit_bot():
     return "Good bye!"
 
-# The main function of the bot
+# Parse and execute the user command
 def main():
     while True:
-        command = input("Enter a command: ").lower()
+        command = input("Enter command: ").lower().strip()
 
-        if command == "hello":
-            print(hello())
+        if command.lower() == "hello":
+            print("How can I help you?")
         elif command.startswith("add "):
-            _, rest_of_command = command.split(" ", 1)
-            try:
-                name, phone = rest_of_command.split(" ")
-                print(add_contact(name, phone))
-            except ValueError:
-                print("Invalid command format. Please use 'add [name] [phone]' format.")
+            print(add_contact(command))
         elif command.startswith("change "):
-            _, rest_of_command = command.split(" ", 1)
-            try:
-                name, phone = rest_of_command.split(" ")
-                print(change_contact(name, phone))
-            except ValueError:
-                print("Invalid command format. Please use 'change [name] [phone]' format.")
+            print(change_contact(command))
         elif command.startswith("phone "):
-            _, name = command.split(" ", 1)
-            print(phone_contact(name))
+            print(get_phone(command))
         elif command == "show all":
             print(show_all_contacts())
         elif command in ["good bye", "close", "exit"]:
-            print(exit_bot())
+            print("Good bye!")
             break
         else:
             print("Unknown command. Please try again.")
