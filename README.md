@@ -19,4 +19,3 @@ The bot accepts commands:
 
 All user input errors are handled by the input_error decorator. This decorator is responsible for returning messages such as "Enter user name", "Give me name and phone please", etc. The input_error decorator handles exceptions that occur in the handler functions (KeyError, ValueError, IndexError) and returns the appropriate response to the user.
 
-Translated with www.DeepL.com/Translator (free version)
