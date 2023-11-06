@@ -75,6 +75,11 @@ def show_all_contacts():
 # Function to terminate the bot
 def exit_bot():
     return "Good bye!"
+    
+# Function to handle unknown commands
+@input_error
+def unknown_command(command):
+    return f"Unknown command: {command}. Please try again."
 
 # Parse and execute the user command
 def main():
@@ -95,7 +100,7 @@ def main():
             print("Good bye!")
             break
         else:
-            print("Unknown command. Please try again.")
+            print(unknown_command(command))
 
 if __name__ == "__main__":
     main()
